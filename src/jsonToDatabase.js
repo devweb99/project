@@ -16,11 +16,11 @@ async function unpack () {
             tar.decompress({
                 src: config.tar,
                 dest: config.to,
-                // tar: {
-                //     map: function(header) {
-                //         console.log(header)
-                //     }
-                // }
+                tar: {
+                    map: function(header) {
+                        header.name = items[i].replace(/tar\.gz/g,"json")
+                    }
+                }
             }, function(err){
                 if(err) {
                     console.log(err)
@@ -28,19 +28,6 @@ async function unpack () {
                     console.log("Done!")
                 }
             })
-
-
-            // fs.createReadStream(config.tar + '/' + items[i])
-            //     .pipe(tar.x({
-            //         sync: true,
-            //         strip: 2,
-            //         C: config.to,
-            //         transform: (e) => {
-            //             let nameJson = items[i].replace(/tar\.gz/g,"json")
-            //
-            //             fs.rename(config.to + config.defaultNameJson, config.to + '/' + nameJson, (err) => { if (err) throw err })
-            //         }
-            //     }))
         }
     }
 }
