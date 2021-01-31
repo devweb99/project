@@ -23,6 +23,8 @@
     "tar-stream": "^2.2.0"
   },
   "dependencies": {
-    "request-promise-native": "^1.0.9"
+    "js-base": "0.0.1-beta",
+    "request-promise-native": "^1.0.9",
+    "targz": "^1.0.1"
   }
 }
