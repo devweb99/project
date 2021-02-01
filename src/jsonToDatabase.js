@@ -5,6 +5,8 @@ import * as promise from 'promise'
 import * as _ from 'lodash'
 import * as got from 'got'
 import * as config from './unpackConfig'
+import mongoose from 'mongoose'
+
 
 (async () => {
     let promise = new Promise(function (resolve, reject) {
@@ -12,10 +14,30 @@ import * as config from './unpackConfig'
     })
 
     promise.then((items)=>{
+        mongoose.connect('mongodb://localhost:27017/test', {useNewUrlParser: true, useUnifiedTopology: true});
+
+        const Schema = mongoose.Schema
+
+        const sellerScheme = new Schema({
+            _id: Number,
+            sellers: Array,
+            data: Array
+        })
+
+        const Seller = mongoose.model("sellers", sellerScheme)
+
         for (let item of items) {
-            if (item.id == 33383) {
-                console.log(item)
-            }
+            if (item.id == 1)
+            console.log(item.id)
+            /*let seller = new Seller({
+                _id: item.id,
+                sellers: item.sellers,
+                data: item.data
+            })
+
+            seller.save(function (err) {
+                if (err) return handleError(err);
+            })*/
         }
     })
 
@@ -40,8 +62,7 @@ async function groupJsonFromId (callback) {
             let groups = await _.groupBy(json, 'prod_id'),
                 keys = await Object.keys(groups)
 
-            for (let j=0; j < keys.length; j++) {
-                
+            for (let j=0; j < keys.length; j++) { 
                 result.push({
                     id: keys[j],
                     sellers: groups[keys[j]],
