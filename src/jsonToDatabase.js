@@ -22,14 +22,12 @@ import mongoose from 'mongoose'
             _id: Number,
             sellers: Array,
             data: Array
-        })
+        }, {_id: false})
 
         const Seller = mongoose.model("sellers", sellerScheme)
 
         for (let item of items) {
-            if (item.id == 1)
-            console.log(item.id)
-            /*let seller = new Seller({
+            let seller = new Seller({
                 _id: item.id,
                 sellers: item.sellers,
                 data: item.data
@@ -37,8 +35,10 @@ import mongoose from 'mongoose'
 
             seller.save(function (err) {
                 if (err) return handleError(err);
-            })*/
+            })
         }
+
+        console.log('done')
     })
 
 })()
