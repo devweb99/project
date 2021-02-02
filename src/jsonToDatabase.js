@@ -9,11 +9,18 @@ import mongoose from 'mongoose'
 
 
 (async () => {
-    let promise = new Promise(function (resolve, reject) {
-        unpack(() => resolve(groupJsonFromId()))
+    new Promise(function(resolve, reject) {
+        unpack(() => {
+            resolve()
+        })
+    }).then(() => {
+        return groupJsonFromId()
+    }).then(data => {
+        console.log(data)
     })
+      
 
-    promise.then((items)=>{
+/*    promise.then((items)=>{
         mongoose.connect(config.mongodb.connect, {useNewUrlParser: true, useUnifiedTopology: true});
 
         const Schema = mongoose.Schema
@@ -36,19 +43,19 @@ import mongoose from 'mongoose'
             let query = Seller.findOne({_id: item.id}).exec()
     
             return query;
-            /*if (!find) {
+            if (!find) {
                 console.log(1)
                 seller.save()
-            }*/
+            }
         }
     })
 
     promise.then((data) => {
         console.log(data)
-    })
+    })*/
 })()
 
-async function groupJsonFromId (callback) {
+async function groupJsonFromId () {
     const readdir = util.promisify(fs.readdir),
           items = await readdir(config.to)  
     
@@ -64,19 +71,30 @@ async function groupJsonFromId (callback) {
             .map(x => JSON.parse(x)))[0]
 
         if (json) {
-            let groups = await _.groupBy(json, 'prod_id'),
+            let groups =  _.groupBy(json, 'prod_id'),
                 keys = await Object.keys(groups)
 
-            for (let j=0; j < keys.length; j++) { 
-                result.push({
+            for (let key of keys) {
+                let jnew = {
+                    id: key,
+                    sellers: groups[key],
+                    data: data[key]
+                }
+
+                result.push(jnew)
+            }
+
+            return result
+
+        /*    for (let j=0; j < keys.length; j++) { 
+                let jnew = JSON.stringify({
                     id: keys[j],
                     sellers: groups[keys[j]],
                     data: data[keys[j]]
                 })
-            }
-        }
 
-        return await result
+            }*/
+        }
     }
 }
 
