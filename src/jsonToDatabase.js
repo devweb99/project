@@ -4,7 +4,7 @@ import * as util from 'util'
 import * as promise from 'promise'
 import * as _ from 'lodash'
 import * as got from 'got'
-import * as config from './unpackConfig'
+import * as config from './config'
 import mongoose from 'mongoose'
 
 
@@ -14,7 +14,7 @@ import mongoose from 'mongoose'
     })
 
     promise.then((items)=>{
-        mongoose.connect('mongodb://localhost:27017/test', {useNewUrlParser: true, useUnifiedTopology: true});
+        mongoose.connect(config.mongodb.connect, {useNewUrlParser: true, useUnifiedTopology: true});
 
         const Schema = mongoose.Schema
 
@@ -22,9 +22,9 @@ import mongoose from 'mongoose'
             _id: Number,
             sellers: Array,
             data: Array
-        }, {_id: false})
+        })
 
-        const Seller = mongoose.model("sellers", sellerScheme)
+        const Seller = mongoose.model(config.mongodb.collection, sellerScheme)
 
         for (let item of items) {
             let seller = new Seller({
@@ -33,14 +33,19 @@ import mongoose from 'mongoose'
                 data: item.data
             })
 
-            seller.save(function (err) {
-                if (err) return handleError(err);
-            })
+            let query = Seller.findOne({_id: item.id}).exec()
+    
+            return query;
+            /*if (!find) {
+                console.log(1)
+                seller.save()
+            }*/
         }
-
-        console.log('done')
     })
 
+    promise.then((data) => {
+        console.log(data)
+    })
 })()
 
 async function groupJsonFromId (callback) {
